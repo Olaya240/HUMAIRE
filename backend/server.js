@@ -10,6 +10,9 @@ import connectDB from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
 import aiRoutes from './routes/aiRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+import jobRoutes from './routes/job.routes.js';
+import cvRoutes from './routes/cv.routes.js';
+import analysisRoutes from './routes/analysis.routes.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 
 dotenv.config();
@@ -26,6 +29,9 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/jobs', jobRoutes);
+app.use('/api/cvs', cvRoutes);
+app.use('/api/analyze', analysisRoutes);
 
 // Error handler
 app.use(errorHandler);

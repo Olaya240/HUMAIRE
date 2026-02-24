@@ -9,11 +9,16 @@ import { ReflectionPage } from "./components/ReflectionPage";
 import { MatchingPage } from "./components/MatchingPage";
 
 import { motion, AnimatePresence } from "motion/react";
+import { Toaster } from "./components/ui/sonner";
+import { uploadCV, analyzeCvAll } from "../services/api";
+import { toast } from "sonner";
 
 export default function App() {
   const [currentStep, setCurrentStep] = useState("landing");
   const [documentContent, setDocumentContent] = useState("");
   const [documentType, setDocumentType] = useState("");
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisResult, setAnalysisResult] = useState(null);
 
   const getStepNumber = (step) => {
     const steps = {
@@ -31,10 +36,36 @@ export default function App() {
     setCurrentStep("upload");
   };
 
-  const handleAnalyze = (type, content) => {
-    setDocumentType(type);
-    setDocumentContent(content);
+  const handleAnalyze = async (type, files) => {
+    if (files.length === 0) return;
+
+    setIsAnalyzing(true);
     setCurrentStep("results");
+
+    try {
+      const file = files[0]; // For now, handle the first file
+
+      // 1. Upload CV
+      toast.info("Uploading document...");
+      const uploadRes = await uploadCV(file.file || file); // Handle both file objects and our custom objects
+
+      // 2. Trigger Analysis (All Job matches)
+      toast.info("Analyzing content...");
+      const analysisRes = await analyzeCvAll(uploadRes.cvId);
+
+      setDocumentType(type);
+      setAnalysisResult(analysisRes);
+      // We set content from the upload response or keep the file name
+      setDocumentContent(uploadRes.extractedText || "Document analysis complete.");
+
+      toast.success("Analysis complete!");
+    } catch (err) {
+      console.error("Analysis failed:", err);
+      toast.error(err.message || "Failed to analyze document");
+      setCurrentStep("upload"); // Go back on error
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   const handleGenerateRewrite = () => {
@@ -130,6 +161,8 @@ export default function App() {
                         >
                           <ResultsPage
                             content={documentContent}
+                            analysis={Array.isArray(analysisResult) ? analysisResult[0] : analysisResult}
+                            loading={isAnalyzing}
                             onGenerateRewrite={handleGenerateRewrite}
                           />
                         </motion.div>
@@ -201,6 +234,7 @@ export default function App() {
             </div>
           </div>
         </footer>
+        <Toaster position="top-center" richColors />
       </div>
     </div>
   );

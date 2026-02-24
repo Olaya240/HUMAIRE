@@ -1,8 +1,8 @@
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+import jwt from 'jsonwebtoken';
+import User from '../models/User.js';
 
 // Middleware to protect routes; expects Authorization: Bearer <token>
-exports.authMiddleware = async (req, res, next) => {
+export const authMiddleware = async (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ message: 'Authorization header missing or malformed' });
@@ -21,7 +21,7 @@ exports.authMiddleware = async (req, res, next) => {
 };
 
 // Admin-only guard
-exports.adminOnly = async (req, res, next) => {
+export const adminOnly = async (req, res, next) => {
   if (!req.user) return res.status(401).json({ message: 'Not authenticated' });
   const user = await User.findById(req.user.id);
   if (!user || user.role !== 'admin') return res.status(403).json({ message: 'Admin access required' });

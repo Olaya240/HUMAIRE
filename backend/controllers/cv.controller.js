@@ -22,7 +22,12 @@ export const uploadCV = async (req, res, next) => {
             extractedText
         });
 
-        res.status(201).json({ message: 'CV uploaded and processed successfully', cv: newCV });
+        res.status(201).json({
+            message: 'CV uploaded and processed successfully',
+            cvId: newCV._id,
+            extractedText: newCV.extractedText,
+            cv: newCV
+        });
 
     } catch (error) {
         next(error);

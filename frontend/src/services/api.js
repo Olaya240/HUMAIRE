@@ -59,4 +59,46 @@ export async function adminGetLogs() {
   return request('/api/admin/logs');
 }
 
+export async function uploadCV(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const token = getToken();
+  const headers = {};
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+
+  const res = await fetch(`${BASE}/api/cvs`, {
+    method: 'POST',
+    body: formData,
+    headers
+  });
+
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const err = new Error(body.message || 'Upload Error');
+    err.status = res.status;
+    err.body = body;
+    throw err;
+  }
+  return body;
+}
+
+export async function getJobs() {
+  return request('/api/jobs');
+}
+
+export async function analyzeCvJob(cvId, jobId) {
+  return request('/api/analyze/cv-job', {
+    method: 'POST',
+    body: JSON.stringify({ cvId, jobId })
+  });
+}
+
+export async function analyzeCvAll(cvId) {
+  return request('/api/analyze/cv-all-jobs', {
+    method: 'POST',
+    body: JSON.stringify({ cvId })
+  });
+}
+
 export { getToken, setToken };

@@ -7,7 +7,10 @@ import { useAuth } from '../../contexts/AuthContext';
 import { Login } from './Auth/Login';
 import { motion } from "motion/react";
 
-export function ResultsPage({ content, analysis, onGenerateRewrite }) {
+import { Skeleton } from "./ui/skeleton";
+import { toast } from "sonner";
+
+export function ResultsPage({ content, analysis, loading, onGenerateRewrite }) {
   const [selectedIssue, setSelectedIssue] = useState(null);
 
   const getScoreColor = (score) => {
@@ -22,26 +25,7 @@ export function ResultsPage({ content, analysis, onGenerateRewrite }) {
     return "bg-red-500";
   };
 
-  const issues = [
-    {
-      id: 1,
-      text: "Native English speaker",
-      risk: "high",
-      category: "Language Discrimination",
-      explanation: "This phrase discriminates against non-native English speakers and may violate equal opportunity laws.",
-      startIndex: content.indexOf("Native English speaker"),
-      endIndex: content.indexOf("Native English speaker") + "Native English speaker".length
-    },
-    {
-      id: 2,
-      text: "Young and energetic",
-      risk: "high",
-      category: "Age Discrimination",
-      explanation: "This language suggests age bias, potentially discriminating against older candidates.",
-      startIndex: content.indexOf("Young and energetic"),
-      endIndex: content.indexOf("Young and energetic") + "Young and energetic".length
-    }
-  ];
+  const issues = analysis?.issues || [];
 
   const getRiskColor = (risk) => {
     switch (risk) {
@@ -112,6 +96,25 @@ export function ResultsPage({ content, analysis, onGenerateRewrite }) {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
   };
+
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto py-8 space-y-8 animate-pulse">
+        <div className="space-y-4">
+          <Skeleton className="h-10 w-1/3" />
+          <Skeleton className="h-6 w-1/2" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Skeleton className="h-32 rounded-2xl" />
+          <Skeleton className="h-32 rounded-2xl" />
+        </div>
+        <div className="grid lg:grid-cols-2 gap-8">
+          <Skeleton className="h-[400px] rounded-xl" />
+          <Skeleton className="h-[400px] rounded-xl" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <motion.div

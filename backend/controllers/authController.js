@@ -1,6 +1,6 @@
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import User from '../models/User.js';
 
 // Helper to sign JWT
 function signToken(user) {
@@ -11,7 +11,7 @@ function signToken(user) {
 }
 
 // Register a new user
-exports.register = async (req, res) => {
+export const register = async (req, res) => {
   const { name, email, password } = req.body;
   if (!name || !email || !password) {
     return res.status(400).json({ message: 'Name, email and password are required' });
@@ -28,7 +28,7 @@ exports.register = async (req, res) => {
 };
 
 // Login existing user
-exports.login = async (req, res) => {
+export const login = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) return res.status(400).json({ message: 'Email and password required' });
 
@@ -43,7 +43,7 @@ exports.login = async (req, res) => {
 };
 
 // Get current user (expects auth middleware to have set req.user)
-exports.me = async (req, res) => {
+export const me = async (req, res) => {
   const user = await User.findById(req.user.id).select('-password');
   if (!user) return res.status(404).json({ message: 'User not found' });
   res.json({ user });

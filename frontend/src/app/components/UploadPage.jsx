@@ -27,14 +27,14 @@ export function UploadPage({ onAnalyze }) {
     setDragActive(false);
 
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      const newFiles = Array.from(e.dataTransfer.files).map(f => ({ name: f.name }));
+      const newFiles = Array.from(e.dataTransfer.files).map(f => ({ name: f.name, file: f }));
       setFiles(prev => [...prev, ...newFiles].slice(0, 2));
     }
   };
 
   const handleFileInput = (e) => {
     if (e.target.files && e.target.files.length > 0) {
-      const newFiles = Array.from(e.target.files).map(f => ({ name: f.name }));
+      const newFiles = Array.from(e.target.files).map(f => ({ name: f.name, file: f }));
       setFiles(prev => [...prev, ...newFiles].slice(0, 2));
     }
   };
@@ -45,10 +45,7 @@ export function UploadPage({ onAnalyze }) {
 
   const handleSubmit = () => {
     if (files.length > 0 && consent) {
-      const mockContent = uploadType === "cv"
-        ? "Experienced software engineer with strong technical skills. Native English speaker preferred. Young and energetic team player."
-        : "We're looking for a rockstar developer to join our dynamic young team. Must be a native English speaker and cultural fit. Ideal candidate is energetic and able to work long hours.";
-      onAnalyze(uploadType, mockContent);
+      onAnalyze(uploadType, files);
     }
   };
 

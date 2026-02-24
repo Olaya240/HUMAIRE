@@ -58,3 +58,24 @@ export const fetchAndStoreJobs = async () => {
         throw error;
     }
 };
+
+export const fetchInterviewDetails = async (interviewId = '19018219') => {
+    try {
+        const options = {
+            method: 'GET',
+            url: 'https://glassdoor-real-time.p.rapidapi.com/companies/interview-details',
+            params: { interviewId },
+            headers: {
+                'x-rapidapi-key': process.env.RAPIDAPI_KEY || 'e5da63c97amshc3dae869f0a7046p12b18fjsn5e4cba115049',
+                'x-rapidapi-host': 'glassdoor-real-time.p.rapidapi.com'
+            }
+        };
+
+        const response = await axios.request(options);
+        console.log('Glassdoor Interview Details:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching Glassdoor interview details:', error.message);
+        throw error;
+    }
+};

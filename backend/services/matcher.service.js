@@ -23,7 +23,8 @@ export const matchCVWithJob = async (cvId, jobId) => {
             strengths: analysisResult.strengths,
             weaknesses: analysisResult.weaknesses,
             missing_skills: analysisResult.missing_skills,
-            improvement_suggestions: analysisResult.improvement_suggestions
+            improvement_suggestions: analysisResult.improvement_suggestions,
+            issues: analysisResult.issues
         },
         { upsert: true, new: true }
     );
@@ -38,13 +39,20 @@ export const matchCVWithAllJobs = async (cvId) => {
     const results = [];
 
     // In production, this should be a queue job, but here we await loop
+    let successCount = 0;
     for (const job of jobs) {
         try {
+            console.log(`Analyzing CV with job: ${job.title} (${job._id})`);
             const analysis = await matchCVWithJob(cvId, job._id);
             results.push(analysis);
+            successCount++;
         } catch (err) {
             console.error(`Failed to analyze job ${job._id}:`, err.message);
         }
+    }
+
+    if (jobs.length > 0 && successCount === 0) {
+        throw new Error('Analysis failed for all available jobs. Please check your AI configuration or try again later.');
     }
 
     // Sort by compatibility score descending

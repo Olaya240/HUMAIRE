@@ -32,7 +32,16 @@ const analysisSchema = new mongoose.Schema({
     improvement_suggestions: {
         type: [String],
         default: []
-    }
+    },
+    issues: [{
+        id: Number,
+        text: String,
+        risk: String,
+        category: String,
+        explanation: String,
+        startIndex: Number,
+        endIndex: Number
+    }]
 }, { timestamps: true });
 
 const Analysis = mongoose.model('Analysis', analysisSchema);

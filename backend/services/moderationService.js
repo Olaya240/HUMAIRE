@@ -10,7 +10,7 @@ const banned = [
   'bomb',
 ];
 
-exports.check = (text) => {
+export const check = (text) => {
   if (!text) return { allowed: true, matches: [] };
   const lowered = text.toLowerCase();
   const matches = banned.filter((w) => lowered.includes(w));

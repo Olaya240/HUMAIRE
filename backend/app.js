@@ -4,7 +4,16 @@ import jobRoutes from './routes/job.routes.js';
 import cvRoutes from './routes/cv.routes.js';
 import analysisRoutes from './routes/analysis.routes.js';
 
+import fs from 'fs';
+import path from 'path';
+
 const app = express();
+
+// Ensure uploads directory exists
+const uploadsDir = path.join(process.cwd(), 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+}
 
 // Middleware
 app.use(cors());

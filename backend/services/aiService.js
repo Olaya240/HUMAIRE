@@ -1,8 +1,8 @@
-const moderation = require('./moderationService');
+import * as moderation from './moderationService.js';
 
 // Simulated AI Service: takes a prompt and returns a response object.
 // In a real integration, this would call OpenAI or another provider.
-exports.processQuery = async (prompt, opts = {}) => {
+export const processQuery = async (prompt, opts = {}) => {
   // 1) Run moderation on the prompt
   const mod = moderation.check(prompt);
 
